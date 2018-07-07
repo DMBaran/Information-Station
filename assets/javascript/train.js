@@ -23,7 +23,6 @@ $(document).ready(function() {
             Destination: destination,
             FirstTrainTime: firstTrainTime,
             Frequency: frequency,
-            timestamp: firebase.database.ServerValue.TIMESTAMP
         };
 
         database.ref().push(train);
@@ -36,15 +35,15 @@ $(document).ready(function() {
         Destination = childSnapshot.val().Destination;
         FirstTrainTime = childSnapshot.val().FirstTrainTime;
         Frequency = childSnapshot.val().Frequency;
-        var timeStamp = childSnapshot.val().timestamp;
-
-        var diffTime = moment().diff(moment.unix(FirstTrainTime), "minutes");
-        var timeRemainder = moment().diff(moment.unix(FirstTrainTime), "minutes") % Frequency;
+        
+        var FirstTrainConverted = moment(FirstTrainTime, "hh:mm").subtract("1, years");
+        var diffTime = moment().diff(moment.unix(FirstTrainConverted), "minutes");
+        var timeRemainder = diffTime % Frequency;
         var minutes = Frequency - timeRemainder;
 
-        var nextTrainArrival = moment().add(minutes, "m").format("LT");
+        var nextTrainArrival = moment().add(minutes, "m").format("hh:mm a");
 
-        $(".table > tbody").append("<tr><td>" + Name + "</td><td>" + Destination + "</td><td>" + FirstTrainTime + "</td><td>" + Frequency + " mins" + "</td><td>" + timeStamp + "</td><td>" + minutes + "</td></tr>");
+        $(".table > tbody").append("<tr><td>" + Name + "</td><td>" + Destination + "</td><td>" + Frequency + " mins" + "</td><td>" + nextTrainArrival + "</td><td>" + minutes + "</tr>");
 
     });
 });
